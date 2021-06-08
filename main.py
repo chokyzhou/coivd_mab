@@ -71,9 +71,9 @@ days = list(range(start,end))
 a = plt.plot(days, total_death_greedy)
 b = plt.plot(days, total_death_UD)
 c = plt.plot(days, total_death_IB)
-m1 = "a"
-m2 = "b"
-m3 = "c"
+m1 = "Proposed Distribution Solution"
+m2 = "Distribute by Population"
+m3 = "Distribute by Number of Infections"
 plt.legend([m1,m2,m3])
 plt.title('Accumulated Death after Initial Batch of Vaccine Distribution')
 plt.grid(True)
