@@ -14,28 +14,6 @@ class Solver:
         model3 = models[1]
         model2 = models[2]
 
-        # Beta probability distribution parameters for each area. Beta distros output is in range [0.0, 1.0].
-        # a/b represent the ratio population/death people
-        # So, a number b_i is sampled from each probability distro that defines the probability of an infected person
-        # Then, we'll draw a sample from a uniform distro (0.0, 1.0) u_i. If u_i < b_i, then we have an infected person.
-
-        # 'a' is the number of infected people
-        # 'b' is the number of exposed people
-
-        try:  
-            beta_distro_param_1 = {'b': populations[0], 'a': beta_params[0][11]+1}   # skewed to the right
-        except:
-            beta_distro_param_1 = {'b': populations[0], 'a': 1}   # skewed to the right
-        try:  
-            beta_distro_param_2 = {'b': populations[1], 'a': beta_params[1][11]+1}   # skewed to the right but less than the previous ones
-        except:
-            beta_distro_param_2 = {'b': populations[1], 'a': 1}   # skewed to the right but less than the previous ones
-        try:  
-            beta_distro_param_3 = {'b': populations[2], 'a': beta_params[2][11]+1}   # normal distro
-        except:
-            beta_distro_param_3 = {'b': populations[2], 'a': 1}   # normal distro
-
-
         egreedy = EGreedy(k=self.num_areas, epsilon = epsilon)
 
         sum_rewards = 0.0
@@ -49,11 +27,11 @@ class Solver:
             choices.append(area_chosen)
             
             if area_chosen == 0:
-                probability_of_true_positive = np.random.beta(**beta_distro_param_1)
+                probability_of_true_positive = beta_params[0].get(0, 0) / ( beta_params[0].get(0, 0) + beta_params[0].get(2, 0))
             elif area_chosen == 1:
-                probability_of_true_positive = np.random.beta(**beta_distro_param_2)
+                probability_of_true_positive = beta_params[1].get(0, 0)  / ( beta_params[1].get(0, 0)  + beta_params[1].get(2, 0) )
             else:
-                probability_of_true_positive = np.random.beta(**beta_distro_param_3)
+                probability_of_true_positive = beta_params[2].get(0, 0)  / ( beta_params[2].get(0, 0)  + beta_params[2].get(2, 0) )
             
             # give reward
             random_number = np.random.uniform(0.0, 1, 1)[0]

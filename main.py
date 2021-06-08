@@ -13,9 +13,9 @@ num_vaccines = 3000
 num_areas = 3
 
 ## create model
-model1_template,config1 = model_init(populations[0],0.1)
-model2_template,config1 = model_init(populations[1],0.011)
-model3_template,config1 = model_init(populations[2],0.01)
+model1_template,config1 = model_init(populations[0],0.1/5)
+model2_template,config1 = model_init(populations[1],0.011/5)
+model3_template,config1 = model_init(populations[2],0.01/5)
 
 
 # Simulation execution: run for 20 days
@@ -68,10 +68,13 @@ print(total_death_UD)
 print(total_death_IB)
 
 days = list(range(start,end))
-plt.plot(days, total_death_greedy)
-plt.plot(days, total_death_UD)
-plt.plot(days, total_death_IB)
-
-plt.title('day vs. deaths')
+a = plt.plot(days, total_death_greedy)
+b = plt.plot(days, total_death_UD)
+c = plt.plot(days, total_death_IB)
+m1 = "a"
+m2 = "b"
+m3 = "c"
+plt.legend([m1,m2,m3])
+plt.title('Accumulated Death after Initial Batch of Vaccine Distribution')
 plt.grid(True)
 plt.show()
