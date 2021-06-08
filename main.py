@@ -13,9 +13,9 @@ num_vaccines = 3000
 num_areas = 3
 
 ## create model
-model1_template,config1 = model_init(populations[0],0.1/5)
-model2_template,config1 = model_init(populations[1],0.011/5)
-model3_template,config1 = model_init(populations[2],0.01/5)
+model1_template,config1 = model_init(populations[0],0.01)
+model2_template,config1 = model_init(populations[1],0.1)
+model3_template,config1 = model_init(populations[2],0.01)
 
 
 # Simulation execution: run for 20 days
@@ -24,10 +24,11 @@ total_death_greedy = []
 total_death_UD = []
 total_death_IB = []
 total_death_PB = []
-start,end = 0, 20
+start,end = 0, 1
 observe_day = 6
 
 for init_day in range(start,end):
+    print(init_day)
     ## reset
     beta_params = beta_param_generate(init_day,model1_template,model2_template,model3_template)
 
@@ -90,3 +91,11 @@ plt.legend([m1,m2,m3,m4])
 plt.title('Accumulated Death after Initial Batch of Vaccine Distribution')
 plt.grid(True)
 plt.show()
+'''
+days = list(range(start,end))
+plt.plot(days, [a - b for a,b in zip(total_death_greedy,total_death_UD)])
+plt.title('Number of avoided Death')
+plt.grid(True)
+plt.show()
+'''
+
