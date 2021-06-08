@@ -4,9 +4,10 @@ import numpy as np
 from utils import population_count,num_infections
 
 class Solver:
-    def __init__(self,num_vaccines,num_areas):
+    def __init__(self,num_vaccines,num_areas, observe_day = 6):
         self.num_vaccines = num_vaccines
         self.num_areas = num_areas
+        self.observe_day = observe_day
             
     def egreedy(self,models,populations,beta_params,epsilon = .2):
         ## init. 
@@ -52,9 +53,9 @@ class Solver:
             else:
                 model3.params["model"]['v'] = vac_dist/populations[2]
                 
-        iterations = model1.iteration_bunch(6)
-        iterations = model2.iteration_bunch(6)
-        iterations = model3.iteration_bunch(6)
+        iterations = model1.iteration_bunch(self.observe_day)
+        iterations = model2.iteration_bunch(self.observe_day)
+        iterations = model3.iteration_bunch(self.observe_day)
         stat1 = model1.status
         stat2 = model2.status
         stat3 = model3.status
@@ -83,9 +84,9 @@ class Solver:
             else:
                 model3.params["model"]['v'] = vac_dist/populations[2]
                 
-        iterations = model1.iteration_bunch(6)
-        iterations = model2.iteration_bunch(6)
-        iterations = model3.iteration_bunch(6)
+        iterations = model1.iteration_bunch(self.observe_day)
+        iterations = model2.iteration_bunch(self.observe_day)
+        iterations = model3.iteration_bunch(self.observe_day)
         stat1 = model1.status
         stat2 = model2.status
         stat3 = model3.status
@@ -119,9 +120,45 @@ class Solver:
             else:
                 model3.params["model"]['v'] = vac_dist/populations[2]
                 
-        iterations = model1.iteration_bunch(6)
-        iterations = model2.iteration_bunch(6)
-        iterations = model3.iteration_bunch(6)
+        iterations = model1.iteration_bunch(self.observe_day)
+        iterations = model2.iteration_bunch(self.observe_day)
+        iterations = model3.iteration_bunch(self.observe_day)
+        stat1 = model1.status
+        stat2 = model2.status
+        stat3 = model3.status
+        return (population_count(stat1),
+                population_count(stat2),
+                population_count(stat3),
+                )
+        
+    def population_based(self,models,populations):
+        model1 = models[0]
+        model3 = models[1]
+        model2 = models[2]
+
+        inf1 = num_infections(model1.status)    
+        inf2 = num_infections(model2.status)    
+        inf3 = num_infections(model3.status)    
+
+       
+        inf = inf1 + inf2 +inf3
+
+        choices = [(0,populations[0] / sum(populations)),
+                (1,populations[0] / sum(populations)),
+                (2,populations[0] / sum(populations)),]
+
+        ## herd immunity rate
+        for area_chosen,vac_dist in Counter(choices).items():
+            if area_chosen == 0:
+                model1.params["model"]['v'] = vac_dist
+            elif area_chosen == 1:
+                model2.params["model"]['v'] = vac_dist
+            else:
+                model3.params["model"]['v'] = vac_dist
+                
+        iterations = model1.iteration_bunch(self.observe_day)
+        iterations = model2.iteration_bunch(self.observe_day)
+        iterations = model3.iteration_bunch(self.observe_day)
         stat1 = model1.status
         stat2 = model2.status
         stat3 = model3.status

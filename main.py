@@ -23,15 +23,16 @@ model3_template,config1 = model_init(populations[2],0.01/5)
 total_death_greedy = []
 total_death_UD = []
 total_death_IB = []
+total_death_PB = []
 start,end = 0, 20
-
+observe_day = 6
 
 for init_day in range(start,end):
     ## reset
     beta_params = beta_param_generate(init_day,model1_template,model2_template,model3_template)
 
     models = model_copy(model1_template,model2_template,model3_template)
-    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas)
+    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas, observe_day = observe_day)
     stats_greedy = solver.egreedy(
                     models = models,
                     populations = populations,
@@ -41,15 +42,22 @@ for init_day in range(start,end):
 
 
     models = model_copy(model1_template,model2_template,model3_template)
-    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas)
+    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas,observe_day = observe_day)
     stats_UD = solver.UD(
                     models = models,
                     populations = populations,
     )
     
     models = model_copy(model1_template,model2_template,model3_template)
-    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas)
+    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas,observe_day = observe_day)
     stats_IB = solver.infection_based(
+                    models = models,
+                    populations = populations,
+    )
+    
+    models = model_copy(model1_template,model2_template,model3_template)
+    solver = Solver(num_vaccines = num_vaccines, num_areas = num_areas,observe_day = observe_day)
+    stats_PB = solver.population_based(
                     models = models,
                     populations = populations,
     )
@@ -58,6 +66,7 @@ for init_day in range(start,end):
     total_death_greedy.append(calc_death(stats_greedy))
     total_death_UD.append(calc_death(stats_UD))
     total_death_IB.append(calc_death(stats_IB))
+    total_death_PB.append(calc_death(stats_PB))
     
 
     
@@ -66,15 +75,18 @@ for init_day in range(start,end):
 print(total_death_greedy)
 print(total_death_UD)
 print(total_death_IB)
+print(total_death_PB)
 
 days = list(range(start,end))
 a = plt.plot(days, total_death_greedy)
 b = plt.plot(days, total_death_UD)
 c = plt.plot(days, total_death_IB)
+c = plt.plot(days, total_death_PB)
 m1 = "Proposed Distribution Solution"
-m2 = "Distribute by Population"
+m2 = "Distribute by Number of States"
 m3 = "Distribute by Number of Infections"
-plt.legend([m1,m2,m3])
+m4 = "Distribute by Population"
+plt.legend([m1,m2,m3,m4])
 plt.title('Accumulated Death after Initial Batch of Vaccine Distribution')
 plt.grid(True)
 plt.show()
